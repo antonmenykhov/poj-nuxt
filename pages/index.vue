@@ -14,6 +14,7 @@
 // @ is an alias to /src
 
 export default {
+  transition: 'slide-left',
   async asyncData ({ store }) {
     const info = await store.state.services
     return { info }
@@ -28,3 +29,22 @@ export default {
 
 }
 </script>
+<style lang="css">
+
+.slide-left-enter-active {
+    animation-name: slide-left-in;
+    animation-duration: .5s;
+}
+
+@keyframes slide-left-in {
+    0% {
+        transform: translate3d(0, -100%, 0);
+        opacity: 0;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}
+
+</style>

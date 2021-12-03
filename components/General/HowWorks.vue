@@ -31,37 +31,25 @@
       <div class="description">
         Нужна консультация по услугам? <br> Оставьте заявку и мы перезвоним вам в ближайшее время
       </div>
-      <form>
-        <div class="line flex">
-          <div class="input">
-            <div class="label-input">
-              Ваше имя
-            </div>
-            <input v-model="form.name" type="text" name="name">
-          </div>
-          <div class="input">
-            <div class="label-input">
-              Ваш номер телефона
-            </div>
-            <input v-model="form.phone" type="text" name="phone">
-          </div>
+      <el-form ref="form" :model="form" label-position="top" :rules="rules">
+        <div class="flex">
+          <el-form-item class="input" prop="name" label="Имя">
+            <el-input v-model="form.name" />
+          </el-form-item>
+          <el-form-item class="input" prop="phone" label="Телефон">
+            <el-input v-model="form.phone" />
+          </el-form-item>
         </div>
-        <div class="line">
-          <div class="input input-service">
-            <div class="label-input">
-              Услуга
-            </div>
-            <select v-model="form.service" type="text" name="service">
-              <option v-for="item,i in services" :key="i" :value="item">
-                {{ item }}
-              </option>
-            </select>
-          </div>
-        </div>
-        <button :disabled="disabled" class="orange-button brown-button" @click="send">
+
+        <el-form-item class="input select" prop="service" label="Услуга">
+          <el-select v-model="form.service">
+            <el-option v-for="item,i in services" :key="i" :value="item" :label="item" />
+          </el-select>
+        </el-form-item>
+        <el-button class="orange-button brown-button" :disabled="disabled" :loading="loading" @click="submitForm">
           {{ btnText }}
-        </button>
-      </form>
+        </el-button>
+      </el-form>
     </div>
   </section>
 </template>
@@ -71,6 +59,7 @@ export default {
   data () {
     return {
       disabled: false,
+      loading: false,
       btnText: 'Отправить',
       timeline: [{
         name: 'Осмотр объекта нашими специалистами'
@@ -88,7 +77,18 @@ export default {
       form: {
         name: '',
         phone: '',
-        service: 'Видеонаблюдение'
+        service: ''
+      },
+      rules: {
+        name: [{ required: true, message: 'Введите имя', trigger: 'blur' },
+          { min: 3, message: 'Имя должно быть длинее 3 символов', trigger: 'blur' }
+        ],
+        phone: [{ required: true, message: 'Введите телефон', trigger: 'blur' },
+          { min: 6, message: 'Укажите корректный номер', trigger: 'blur' }
+        ],
+        service: [
+          { required: true, message: 'Выберите услугу', trigger: 'change' }
+        ]
       },
       services: [
         'Видеонаблюдение',
@@ -102,20 +102,67 @@ export default {
     }
   },
   methods: {
-    send (e) {
-      e.preventDefault()
-      this.btnText = 'Отправлено'
-      this.disabled = true
-      const data = new FormData()
-      data.append('name', this.form.name)
-      data.append('phone', this.form.phone)
-      data.append('service', this.form.service)
+    submitForm () {
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          this.loading = true
+          this.sendData()
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    async sendData () {
+      try {
+        const response = await fetch('/mailer/mailer.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(this.form)
+        })
+        if (await response.ok) {
+          this.loading = false
+          this.disabled = true
+          this.btnText = 'Отправлено'
+        }
+      } catch (err) { console.log(err) }
     }
   }
 }
 </script>
 
 <style>
+.el-form--label-top .el-form-item__label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.select .el-select,
+.select {
+    width: 100%;
+}
+
+.el-select-dropdown__item span {
+    color: #333
+}
+
+.el-button.brown-button {
+    height: 60px;
+    border-radius: 36px;
+    padding: 10px 40px;
+    border: 0;
+    margin-top: 20px;
+}
+
+.el-button.brown-button span {
+    color: white;
+    margin-left: 0;
+    font-size: 18px;
+}
+
 .how-works-left,
 .how-works-right {
     flex: 1 1 300px;
@@ -140,7 +187,7 @@ export default {
 }
 
 .brown {
-    color: #ae4c1c;
+    color: #ae4c1c!important;
 }
 
 .brown-button {
@@ -240,7 +287,8 @@ export default {
     border: none;
     font-size: 18px;
     font-weight: 700;
-    color: #333
+    color: #333;
+    height: 60px;
 }
 
 .input select {
@@ -314,8 +362,9 @@ export default {
         padding: 50px 20px;
     }
 }
-@media (max-width: 600px){
-    .contacts .how-works-left{
+
+@media (max-width: 600px) {
+    .contacts .how-works-left {
         display: none;
     }
 }

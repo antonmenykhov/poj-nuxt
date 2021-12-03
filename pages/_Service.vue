@@ -31,7 +31,8 @@ export default {
         { hid: 'description', name: 'description', content: this.service.acf.smallDescription }
       ]
     }
-  }
+  },
+  transition: 'slide-left'
 
 }
 </script>

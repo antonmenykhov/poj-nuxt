@@ -121,14 +121,16 @@ export default {
 .sub-menu {
     background: white;
     border-radius: 25px;
-    display: none;
     position: absolute;
     top: 50px;
     left: -50px;
     flex-direction: column;
     padding: 10px 25px;
     transition: all .3s;
-
+    opacity: 0;
+    transform: scaleY(0)translateY(-100px);
+    transition: all .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    display: flex;
 }
 
 .menu-item a:hover {
@@ -137,7 +139,8 @@ export default {
 
 .menu-item:hover .sub-menu,
 .sub-menu:hover {
-    display: flex;
+    opacity: 1;
+    transform: scaleY(1)translateY(0);
 }
 
 .sub-menu a {

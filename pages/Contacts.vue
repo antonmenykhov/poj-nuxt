@@ -13,7 +13,8 @@ export default {
     meta: [
       { hid: 'description', name: 'description', content: 'Компания Reguard более 5 лет занимается монтажем, наладкой и проектированием различных систем безопасности' }
     ]
-  }
+  },
+  transition: 'slide-left'
 }
 </script>
 
