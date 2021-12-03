@@ -33,7 +33,7 @@ export default {
     '@nuxtjs/fontawesome'
     // https://go.nuxtjs.dev/eslint
   ],
-  loadeing: false,
+  loading: false,
   fontawesome: {
     icons: {
       brands: ['faVk', 'faInstagram', 'faViber', 'faWhatsapp'],
@@ -42,10 +42,12 @@ export default {
   },
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    ['@nuxtjs/google-fonts', { families: { 'Fira+Sans': { wght: [400, 600, 700, 800, 900] } } }]
   ],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-    transpile: [/^element-ui/]
+    transpile: [/^element-ui/],
+    analyze: true
   }
 }
